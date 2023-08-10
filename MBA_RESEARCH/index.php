@@ -47,10 +47,14 @@ function create_table_on_activate()
         user_id bigint(20) UNSIGNED NOT NULL,
         username varchar(255) NOT NULL,
         email varchar(255) NOT NULL,
+        supervisor varchar(255) NOT NULL,
+        topic varchar(255) NOT NULL,
+        student varchar(255) NOT NULL,
         registration_date datetime NOT NULL,
         PRIMARY KEY (id),
         KEY user_id (user_id)
     ) $charset_collate;";
+
 
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -115,8 +119,8 @@ function on_activating_your_plugin()
     create_page('students_table', '[students_table]');
     create_page('supervisors_table', '[supervisors_table]');
 
-    // 3UPDATE
 
+    // 3UPDATE
 
 }
 register_activation_hook(__FILE__, 'on_activating_your_plugin');
@@ -143,8 +147,8 @@ function on_deactivating_your_plugin()
     $supervisors_table = get_page_by_path('supervisors_table');
 	wp_delete_post($supervisors_table->ID, true);                 // supervisors
 
-    // 3UPDATE
 
+    // 3UPDATE
 
 }
 register_deactivation_hook(__FILE__, 'on_deactivating_your_plugin');
