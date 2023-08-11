@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_wp_error($user_id)) {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'students'; // Replace 'prefix' with your actual table prefix
+        $table_name = $wpdb->prefix . 'admin'; // Replace 'prefix' with your actual table prefix
         $data = array(
             'user_id' => $user_id,
             'username' => $username,

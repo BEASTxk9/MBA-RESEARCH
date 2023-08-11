@@ -40,16 +40,16 @@ function create_table_on_activate()
     global $wpdb;
 
     // set table name
-    $students = $wpdb->prefix . 'students';
+    $admin = $wpdb->prefix . 'admin';
 
-    $sql = "CREATE TABLE $students (
+    $sql = "CREATE TABLE $admin (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         user_id bigint(20) UNSIGNED NOT NULL,
         username varchar(255) NOT NULL,
         email varchar(255) NOT NULL,
-        supervisor varchar(255) NOT NULL,
-        topic varchar(255) NOT NULL,
-        student varchar(255) NOT NULL,
+        supervisor varchar(255) NOT NULL DEFAULT 'No Supervisor',
+        topic varchar(255) NOT NULL DEFAULT 'Select',
+        students varchar(255) NOT NULL,
         registration_date datetime NOT NULL,
         PRIMARY KEY (id),
         KEY user_id (user_id)
@@ -119,7 +119,6 @@ function on_activating_your_plugin()
     create_page('students_table', '[students_table]');
     create_page('supervisors_table', '[supervisors_table]');
 
-
     // 3UPDATE
 
 }
@@ -146,7 +145,6 @@ function on_deactivating_your_plugin()
 	wp_delete_post($students_table->ID, true);                    // students
     $supervisors_table = get_page_by_path('supervisors_table');
 	wp_delete_post($supervisors_table->ID, true);                 // supervisors
-
 
     // 3UPDATE
 
