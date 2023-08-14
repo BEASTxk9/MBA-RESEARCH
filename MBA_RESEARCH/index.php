@@ -19,10 +19,13 @@
 // eg.  require_once plugin_dir_path(__FILE__) . './file.php';
 
 // 1CREATE
+require_once plugin_dir_path(__FILE__) . './includes/01create/add_topic.php';
+
 
 // 2READ
 require_once plugin_dir_path(__FILE__) . './includes/02read/students.php';
 require_once plugin_dir_path(__FILE__) . './includes/02read/supervisor.php';
+require_once plugin_dir_path(__FILE__) . './includes/02read/topics.php';
 
 
 // 3UPDATE
@@ -41,7 +44,11 @@ function create_table_on_activate()
 
     // set table name
     $admin = $wpdb->prefix . 'admin';
+    $topics = $wpdb->prefix . 'topics';
 
+    $charset_collate = $wpdb->get_charset_collate(); // Define the character set and collation
+
+    // Define SQL for the admin table
     $sql = "CREATE TABLE $admin (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         user_id bigint(20) UNSIGNED NOT NULL,
@@ -55,12 +62,21 @@ function create_table_on_activate()
         KEY user_id (user_id)
     ) $charset_collate;";
 
-
+    // Define SQL for the topics table
+    $sql .= "CREATE TABLE $topics (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        research_field VARCHAR(255) NOT NULL,
+        sub_topics VARCHAR(255) NOT NULL,
+        mini_topics VARCHAR(255) NOT NULL DEFAULT 'no mini_topic',
+        PRIMARY KEY (id)
+    ) $charset_collate;";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    $result = dbDelta($sql);
 
-    if (is_wp_error($result)) {
+    // Execute dbDelta for both tables separately
+    $result_admin = dbDelta($sql);
+
+    if (is_wp_error($result_admin) || is_wp_error($result_topics)) {
         echo 'There was an error creating the tables';
         return;
     }
@@ -68,9 +84,6 @@ function create_table_on_activate()
 
 register_activation_hook(__FILE__, 'create_table_on_activate');
 // Fetch registered users and insert them into the students table
-
-
-
 
 
 
@@ -114,10 +127,13 @@ function on_activating_your_plugin()
     // _________________________________________
     
     // 1CREATE
+    create_page('add_topic', '[add_topic]');
+
 
     // 2READ
     create_page('students_table', '[students_table]');
     create_page('supervisors_table', '[supervisors_table]');
+    create_page('topics_table', '[topics_table]');
 
     // 3UPDATE
 
@@ -139,12 +155,16 @@ function on_deactivating_your_plugin()
     // _________________________________________
 
     // 1CREATE
+    $add_topic = get_page_by_path('add_topic');
+	wp_delete_post($add_topic->ID, true);                 // add_topic
 
     // 2READ
     $students_table = get_page_by_path('students_table');
 	wp_delete_post($students_table->ID, true);                    // students
     $supervisors_table = get_page_by_path('supervisors_table');
 	wp_delete_post($supervisors_table->ID, true);                 // supervisors
+    $topics_table = get_page_by_path('topics_table');
+	wp_delete_post($topics_table->ID, true);                 // topics
 
     // 3UPDATE
 
